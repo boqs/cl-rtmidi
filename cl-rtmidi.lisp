@@ -47,4 +47,5 @@ USB dongles are on"
        us)))
 #+ccl
 (defun get-internal-utime ()
-  (get-internal-real-time))
+  (/ (ccl:current-time-in-nanoseconds)
+     1000.0))
