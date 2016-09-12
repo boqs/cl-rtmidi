@@ -29,5 +29,5 @@ chmod a+rw /dev/ttyS2 (or add user to the uucp group and logout/login)
 
 obviously everything could be done a bit neater if I was better at
 UNIX, but hey if you're reading this I guess you are probably a
-paren-slinging lisp cowboy and won't lose sleep over a few dodgy shell
-scripts...
+paren-slinging lisp badass and won't lose sleep over it...
+
