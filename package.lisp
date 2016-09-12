@@ -21,6 +21,10 @@
 	   ;; #:lo-nibble #:hi-bit
 	   ;; #:pack-nibbles #:parse-packet
 	   #:write-midi-message #:with-midi-out #:*default-midi-out-stream*
+	   #:read-midi-byte #:write-midi-byte
 	   #:read-midi-message #:with-midi-in #:*default-midi-in-stream*
 	   #:midi-note= #:make-midi-note-off #:make-midi-note-on
-	   #:get-oss-midi-index-named #:get-oss-midi-dev-named))
+	   #:get-oss-midi-index-named #:get-oss-midi-dev-named
+	   #:get-virmidi
+	   #:with-midi-oss-out #:with-midi-oss-in
+	   #:with-midi-uart-out #:with-midi-uart-in))
