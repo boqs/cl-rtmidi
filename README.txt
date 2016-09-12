@@ -13,9 +13,12 @@ beaglebone black:
     (write-midi-message (make-instance 'note-on-midi-message
                                        :raw-midi '(144 35 111)))))
 
-This uart method has only been tested on beaglebone black.  In order
-to set up the uart on arch linux, and give lisp the right permissions
-this recipe seems to work:
+This uart method has only been tested on beaglebone black.  Soon I
+will also add a backend for alsa sequencer ports, rendering my other
+linux midi library, cl-alsaseq, obselete...
+
+In order to set up the uart on arch linux, and give lisp the right
+permissions this recipe seems to work:
 
 append this line to uEnv.txt:
 capemgr.enable_partno=BB-UART2
