@@ -20,9 +20,11 @@
 USB dongles are on"
   (let ((dev-idx (get-oss-midi-index-named name)))
     (when dev-idx
-      (format nil
-	      "/dev/midi~A"
-	      dev-idx))))
+      (if (string= dev-idx "0")
+	  "/dev/midi"
+	  (format nil
+		  "/dev/midi~A"
+		  dev-idx)))))
 
 (defun get-oss-midi-index-named (name)
   "this one does the heavy lifting"
