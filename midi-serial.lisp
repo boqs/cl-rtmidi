@@ -46,7 +46,7 @@
 
 (defmacro with-midi-uart-out ((midi-stream dev-filename) &body body)
   `(with-midi-uart-stream (,midi-stream ,dev-filename o-wronly)
-     (tcflush (fd ,midi-stream) tcoflush)
+     ;; (tcflush (fd ,midi-stream) tcoflush)
      (progn ,@body)))
 
 (defmethod write-midi-byte (byte (midi-stream midi-uart-stream))
