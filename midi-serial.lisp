@@ -4,7 +4,8 @@
 
 (defmacro with-midi-uart-fd ((fd dev-filename file-mode) &body body)
   (let ((tio (gensym)))
-    `(let ((,fd (iolib.syscalls:open ,dev-filename ,file-mode)))
+    `(let ((,fd (iolib.syscalls:open ,dev-filename (or ,file-mode
+						       no-ctty))))
        (unwind-protect (cffi:with-foreign-pointer (,tio (cffi:foreign-type-size '(:struct termios2)))
 			 (assert (>= (iolib.syscalls:ioctl ,fd tcgets2 ,tio)
 				     0))

@@ -21,6 +21,7 @@
 (constant (o-rdwr "O_RDWR"))
 (constant (o-rdonly "O_RDONLY"))
 (constant (o-wronly "O_WRONLY"))
+(constant (o-noctty "O_NOCTTY"))
 
 (cstruct termios2 "struct termios2"
 	 (c-iflag "c_iflag" :type :uint)
