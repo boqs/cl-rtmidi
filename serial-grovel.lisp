@@ -31,3 +31,7 @@
 	 (c-line "c_line" :type :uint)
 	 (c-ispeed "c_ispeed" :type :uint)
 	 (c-ospeed "c_ospeed" :type :uint))
+
+;; (include "termios.h")
+(constant (tciflush "TCIFLUSH"))
+(constant (tcoflush "TCOFLUSH"))

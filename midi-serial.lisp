@@ -42,8 +42,11 @@
 					      :wr-buffer ,wr-buf)))
 	     (progn ,@body)))))))
 
+(cffi:defcfun tcflush :int (fd :int) (queue-selector :int))
+
 (defmacro with-midi-uart-out ((midi-stream dev-filename) &body body)
   `(with-midi-uart-stream (,midi-stream ,dev-filename o-wronly)
+     (tcflush (fd ,midi-stream) tcoflush)
      (progn ,@body)))
 
 (defmethod write-midi-byte (byte (midi-stream midi-uart-stream))
@@ -53,6 +56,7 @@
 
 (defmacro with-midi-uart-in ((midi-stream dev-filename) &body body)
   `(with-midi-uart-stream (,midi-stream ,dev-filename o-rdonly)
+     (tcflush (fd ,midi-stream) tciflush)
      (progn ,@body)))
 
 (defmethod read-midi-byte ((midi-stream midi-uart-stream))
@@ -74,7 +78,3 @@
 	(setf (cffi:mem-aref foo :uchar i)
 	      (nth i list)))
       (iolib.syscalls:write fd foo 3)))
-
-(defun tester()
-  (with-midi-uart-output (midi-fd "/dev/ttyS2")
-   (write-list-to-fd '(144 35 111) midi-fd)))
