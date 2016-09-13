@@ -2,21 +2,36 @@
 
 (defconstant +midi-baud-speed+ 31250)
 
+;; XXX HACK! this sucks pretty bad, oh well...
+(defun setup-midi-uart-dev (dev-file)
+  (external-program:run "stty" (list "-F" dev-file "raw"))
+  (external-program:run "stty" (list "-F" dev-file "sane" "-brkint" "-icrnl" "-opost" "-onlcr" "-isig" "-icanon" "-iexten" "-echo" "-echoe")))
+
 (defmacro with-midi-uart-fd ((fd dev-filename file-mode) &body body)
   (let ((tio (gensym)))
     `(progn
-       (external-program:run "stty" '("-F" ,dev-filename "raw"))
+       (setup-midi-uart-dev ,dev-filename)
        (let ((,fd (iolib.syscalls:open ,dev-filename (logior ,file-mode
 							     o-noctty))))
 	 (unwind-protect (cffi:with-foreign-pointer (,tio (cffi:foreign-type-size '(:struct termios2)))
 			   (assert (>= (iolib.syscalls:ioctl ,fd tcgets2 ,tio)
 				       0))
-			   (cffi:with-foreign-slots ((c-cflag c-ispeed c-ospeed) ,tio
+			   (cffi:with-foreign-slots ((c-cflag c-ispeed c-ospeed)
+						     ,tio
 						     (:struct termios2))
-			     (setf c-cflag (logior bother
-						   (logand (lognot cbaud)
-							   c-cflag)))
-			     (setf c-ispeed +midi-baud-speed+)
+			     (setf (cffi:foreign-slot-value ,tio '(:struct termios2)
+							    'c-cflag)
+				   (logior bother
+					   (logand (lognot cbaud)
+						   c-cflag)))
+			     (setf (cffi:foreign-slot-value ,tio '(:struct termios2)
+							    'c-ispeed)
+				   +midi-baud-speed+)
+			     (setf (cffi:foreign-slot-value ,tio '(:struct termios2)
+							    'c-ospeed)
+				   +midi-baud-speed+)
+			     (assert (>= (iolib.syscalls:ioctl ,fd tcsets2 ,tio)
+				       0))
 			     (progn ,@body)))
 	   (iolib.syscalls:close ,fd))))))
 
