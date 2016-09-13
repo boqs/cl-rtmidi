@@ -4,19 +4,21 @@
 
 (defmacro with-midi-uart-fd ((fd dev-filename file-mode) &body body)
   (let ((tio (gensym)))
-    `(let ((,fd (iolib.syscalls:open ,dev-filename (or ,file-mode
-						       no-ctty))))
-       (unwind-protect (cffi:with-foreign-pointer (,tio (cffi:foreign-type-size '(:struct termios2)))
-			 (assert (>= (iolib.syscalls:ioctl ,fd tcgets2 ,tio)
-				     0))
-			 (cffi:with-foreign-slots ((c-cflag c-ispeed c-ospeed) ,tio
-						   (:struct termios2))
-			   (setf c-cflag (logior bother
-						 (logand (lognot cbaud)
-							 c-cflag)))
-			   (setf c-ispeed +midi-baud-speed+)
-			   (progn ,@body)))
-	 (iolib.syscalls:close ,fd)))))
+    `(progn
+       (external-program:run "stty" '("-F" ,dev-filename "raw"))
+       (let ((,fd (iolib.syscalls:open ,dev-filename (logior ,file-mode
+							     o-noctty))))
+	 (unwind-protect (cffi:with-foreign-pointer (,tio (cffi:foreign-type-size '(:struct termios2)))
+			   (assert (>= (iolib.syscalls:ioctl ,fd tcgets2 ,tio)
+				       0))
+			   (cffi:with-foreign-slots ((c-cflag c-ispeed c-ospeed) ,tio
+						     (:struct termios2))
+			     (setf c-cflag (logior bother
+						   (logand (lognot cbaud)
+							   c-cflag)))
+			     (setf c-ispeed +midi-baud-speed+)
+			     (progn ,@body)))
+	   (iolib.syscalls:close ,fd))))))
 
 (defclass midi-uart-stream (midi-stream)
   ((fd
