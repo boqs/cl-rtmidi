@@ -5,7 +5,6 @@
 (include "fcntl.h")
 (include "stdio.h")
 (include "errno.h")
-(include "stropts.h")
 (include "fcntl.h")
 (include "stdlib.h")
 (include "unistd.h")
